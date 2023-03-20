@@ -23,7 +23,6 @@ public class BoardCotroller {
   @PostMapping("boards")
   public ResponseEntity createBoard(@RequestBody final BoardRequestDto requestDto){
     boardService.createBoard(requestDto,null);
-    Board board = boardRepository.findById(1L).orElseThrow();
-    return new ResponseEntity<>(board,HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }
