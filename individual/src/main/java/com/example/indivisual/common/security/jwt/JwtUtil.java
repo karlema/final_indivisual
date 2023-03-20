@@ -1,5 +1,8 @@
-package com.example.indivisual.common.jwt;
+package com.example.indivisual.common.security.jwt;
 
+import com.example.indivisual.user.entity.UserRoleEnum;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
@@ -10,6 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @Slf4j
 @Component
@@ -21,7 +29,7 @@ public class JwtUtil {
   private static final String BEARER_PREFIX = "Bearer ";
   private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
-  @Value("${jwt.secret.key}")
+  @Value("${jwt.token.access-token-secret}")
   private String secretKey;
   private Key key;
   private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
