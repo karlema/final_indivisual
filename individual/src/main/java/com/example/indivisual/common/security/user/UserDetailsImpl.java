@@ -2,6 +2,7 @@ package com.example.indivisual.common.security.user;
 
 import com.example.indivisual.user.entity.User;
 import com.example.indivisual.user.entity.UserRoleEnum;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,9 +16,9 @@ public class UserDetailsImpl implements UserDetails {
   private final String username;
   private final String password;
 
-  public UserDetailsImpl(User user, String username, String password) {
+  public UserDetailsImpl(User user, String email, String password) {
     this.user = user;
-    this.username = username;
+    this.username = email;
     this.password = password;
   }
 

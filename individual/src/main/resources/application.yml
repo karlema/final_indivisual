@@ -88,20 +88,6 @@ spring:
       max-file-size: 5GB
       max-request-size: 5GB
 
-cloud:
-  aws:
-    s3:
-      bucket: spartaolabucket
-      dir: /ola
-    region:
-      static: ap-northeast-2
-      auto: false
-    credentials:
-      access-key: AKIAZM534XFZXCOE3SPA
-      secret-key: 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
-      instanceProfile: true
-    stack:
-      auto: false
 
 logging:
   level:
