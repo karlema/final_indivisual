@@ -16,6 +16,7 @@ public class BoardServiceImpl implements BoardService{
   @Transactional
   public void createBoard(BoardRequestDto boardRequestDto , User user){
 
+    System.out.println(user.getEmail());
     Board board = new Board(boardRequestDto.getTitle(),boardRequestDto.getContents());
     boardRepository.save(board);
     System.out.println(board);
