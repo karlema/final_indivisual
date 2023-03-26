@@ -33,8 +33,9 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
       if(Token!=null){
         String email = jwtUtil.getSubject(Token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        // 인증 객체 생성 및 등록
+
         SecurityContext context = SecurityContextHolder.createEmptyContext();
+        // 인증 객체 생성 및 등록
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }

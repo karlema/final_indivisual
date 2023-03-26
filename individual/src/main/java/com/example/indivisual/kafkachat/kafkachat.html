@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Chat</title>
+</head>
+<body>
+<div>
+  <h1>WebSocket Chat</h1>
+</div>
+<div>
+  <form>
+    <input type="text" id="name" placeholder="Enter your name"/>
+    <input type="text" id="message" placeholder="Enter your message"/>
+    <button type="submit" onclick="sendMessage()">Send</button>
+  </form>
+</div>
+<div id="chat"></div>
+
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+<script type="text/javascript">
+  var stompClient = null;
+
+  function connect() {
+    var socket = new SockJS('/websocket-chat');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+      console.log('Connected: ' + frame);
+      stompClient.subscribe('/topic/messages', function (message) {
+        showMessage(JSON.parse(message.body));
+      });
+    });
+  }
+
+  function sendMessage() {
+    var name = document.getElementById("name").value;
+    var message = document.getElementById("message").value;
+    var chatMessage = {
+      sender: name,
+      content: message
+    };
+    stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+  }
+  function showMessage(message) {
+    var chatDiv = document.getElementById("chat");
+    var messageContent = document.createElement("p");
+    var node = document.createTextNode(message.sender + ": " + message.content);
+    messageContent.appendChild(node);
+    chatDiv.appendChild(messageContent);
+  }
+
+  connect();
+</script>
+</body>
+</html>
+
+
+
+<!--최종적으로 사용자가 보는 화면을 작성하는 HTML 파일을 작성합니다. 여기서는 Thymeleaf를 사용하여 작성하였습니다.-->
+<!--위의 HTML 코드에서는 SockJS와 STOMP 라이브러리를 사용하여 웹 소켓을 구현하고, connect() 함수를 호출하여 웹 소켓 서버에 연결합니다.-->
+<!--연결 후에는 stompClient.subscribe() 함수를 사용하여 /topic/messages 경로로 전송된 메시지를 구독하고, sendMessage() 함수에서는 입력한 이름과 메시지를 JSON 객체로 만들어 /app/chat 경로로 전송합니다.-->
+<!--마지막으로, showMessage() 함수를 사용하여 수신한 메시지를 화면에 출력합니다.-->
+<!--showMessage() 함수에서는 message.sender와 message.content를 이용하여 HTML 요소를 생성하고, chatDiv에 추가합니다. 마지막으로 connect() 함수를 호출하여 웹 소켓 서버에 연결합니다.-->
