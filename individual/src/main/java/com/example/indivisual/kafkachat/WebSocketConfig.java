@@ -8,9 +8,9 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurationSupport;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 //AbstractWebSocketMessageBrokerConfigurer
-@Configuration
-@EnableWebSocketMessageBroker
-@EnableKafka
+//@Configuration
+//@EnableWebSocketMessageBroker
+//@EnableKafka
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override

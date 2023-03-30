@@ -27,17 +27,17 @@ spring:
       maxRequestSize: 30MB #최대 요청 사이즈
       # 즉 한파일에 10MB 이하 총 30MB이하의 이미지를 올려야 한다는 의미
 
-  kafka:
-    consumer:
-      bootstrap-servers: localhost:9092
-      group-id: foo
-      # auto-offset-reset: earliest
-      # key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      # value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      bootstrap-servers: localhost:9092
-      # key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      # value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#  kafka:
+#    consumer:
+#      bootstrap-servers: localhost:9092
+#      group-id: foo
+#      # auto-offset-reset: earliest
+#      # key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      # value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    producer:
+#      bootstrap-servers: localhost:9092
+#      # key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      # value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
   datasource:
     url: jdbc:h2:mem:db;MODE=MYSQL;

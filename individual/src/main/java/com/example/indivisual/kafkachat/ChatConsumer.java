@@ -11,7 +11,7 @@ public class ChatConsumer {
   @Autowired
   private SimpMessagingTemplate messagingTemplate;
 
-  @KafkaListener(topics = "chat-message-topic", groupId = "group-id")
+//  @KafkaListener(topics = "chat-message-topic", groupId = "group-id")
   public void consume(ChatMessage message) {
     messagingTemplate.convertAndSend("/topic/messages", message);
   }
