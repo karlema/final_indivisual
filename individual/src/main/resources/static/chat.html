@@ -35,10 +35,10 @@
       stompClient = Stomp.over(socket);
       stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/public', function (chatMessage) {
-          showMessage(JSON.parse(chatMessage.body));
+        stompClient.subscribe('/topic/localhost:8080/chat', function (kafkaMessage) {
+          showMessage(JSON.parse(kafkaMessage.body));
         });
-        stompClient.send('/app/chat.addUser', {}, JSON.stringify({'sender': username, 'type': 'JOIN'}));
+        stompClient.send('/app/localhost:8080/chat', {}, JSON.stringify({'sender': username, 'type': 'JOIN'}));
       });
     }
 
@@ -52,20 +52,20 @@
     function sendMessage() {
       var message = $('#message').val().trim();
       if (message && stompClient) {
-        var chatMessage = {
+        var kafkaMessage = {
           sender: username,
           content: message,
           type: 'CHAT'
         };
-        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
+        stompClient.send('/app/localhost:8080/chat', {}, JSON.stringify(kafkaMessage));
         $('#message').val('');
       }
     }
 
-    function showMessage(chatMessage) {
-      var content = chatMessage.content;
-      var sender = chatMessage.sender;
-      var messageType = chatMessage.type;
+    function showMessage(kafkaMessage) {
+      var content = kafkaMessage.content;
+      var sender = kafkaMessage.sender;
+      var messageType = kafkaMessage.type;
       if (messageType === 'JOIN') {
         content = sender + ' joined the chat';
       } else if (messageType === 'LEAVE') {
@@ -100,7 +100,7 @@
     });
 
     $('#disconnect').click(function () {
-      stompClient.send('/app/chat.sendMessage', {}, JSON.stringify({'sender': username, 'type': 'LEAVE'}));
+      stompClient.send('/app/localhost:8080/chat', {}, JSON.stringify({'sender': username, 'type': 'LEAVE'}));
       disconnect();
       $('#name-form').show();
       $('#chat-form').hide();

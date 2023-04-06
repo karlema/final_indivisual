@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<form>
+  <input type="text" id="sender" placeholder="Enter your name"/>
+  <input type="text" id="message" placeholder="Enter your message"/>
+  <button type="button" onclick="sendMessage()">Send</button>
+</form>
+<ul id="messages"></ul>
+<script>
+  var stompClient = null;
+
+  function connect() {
+    var socket = new SockJS('http://localhost:8080/chat');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+      console.log('Start Connected: ' + frame);
+      // stompClient.subscribe('/kafkaTopic/localhost:8080/send', function (greeting) {
+      //   console.log('start : /kafkaTopic/localhost:8080/send: ' + greeting);
+      //   showMessage(JSON.parse(greeting.body));
+      // });
+      stompClient.subscribe('/kafkaTopic/send', function (message) {
+        showMessage(message);
+      });
+
+      stompClient.subscribe('/kafkaTopic/read', function (message) {
+        console.log('start /kafkaTopic/read : /kafkaTopic/read: ' + message);
+        showMessage(message);
+      });
+
+      stompClient.subscribe('/kafkaTopic', function (message) {
+        console.log('start topic : /kafkaTopic: ' + message);
+        showMessage(message);
+      });
+
+      stompClient.subscribe('/read', function (message) {
+        console.log('start read : /read: ' + message);
+        showMessage(message);
+      });
+    });
+  }
+
+  function sendMessage() {
+    var broker = $("#sender").val();
+    var content = $("#message").val();
+    var messagedata = {broker: broker, message: content};
+    stompClient.send("/kafkaTopic/send", {}, JSON.stringify(messagedata));
+    console.log("transmit message")
+
+  }
+
+  function showMessage(message) {
+    // let jsondata = JSON.parse((this.message.body));
+    // console.log("message view" + "<li>" + jsondata.broker + ": " + jsondata.message + "</li>")
+    // console.log("json data string" + jsondata.toString())
+    let data = message.body
+    let jsondata = JSON.parse((data))
+
+    // console.log("show2 : " + jsondata.broker)
+    // console.log(message.message,message.broker)
+    var chatMessage = "<li>" + jsondata.broker + ": " + jsondata.message + "</li>";
+    $("#messages").append(chatMessage);
+  }
+
+
+  $(function () {
+    connect();
+  });
+</script>
+</body>
+</html>

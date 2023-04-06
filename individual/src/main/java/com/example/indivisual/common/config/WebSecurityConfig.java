@@ -66,6 +66,11 @@ public class WebSecurityConfig implements WebMvcConfigurer{
         .requestMatchers("/login").permitAll()
         .requestMatchers("/chat/**").permitAll()
         .requestMatchers("/chat.html").permitAll()
+        .requestMatchers("/kafkachat.html").permitAll()
+        .requestMatchers("/index.html").permitAll()
+        .requestMatchers("http://localhost:8080/**").permitAll()
+        .requestMatchers("/send").permitAll()
+        .requestMatchers("/chat/send").permitAll()
         .anyRequest().authenticated()
         .and()
         .addFilterBefore(new CustomSecurityFilter(userDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
