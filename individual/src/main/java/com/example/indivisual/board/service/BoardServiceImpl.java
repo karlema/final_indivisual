@@ -15,19 +15,41 @@ public class BoardServiceImpl implements BoardService{
   @Override
   @Transactional
   public void createBoard(BoardRequestDto boardRequestDto , User user){
-
-    System.out.println(user.getEmail());
-    Board board = new Board(boardRequestDto.getTitle(),boardRequestDto.getContents());
+//    System.out.println(user.getEmail());
+    Board board = new Board()
+        .builder()
+        .contents(boardRequestDto.getContents())
+        .title(boardRequestDto.getTitle())
+        .build();
     boardRepository.save(board);
-    System.out.println(board);
-
+//    System.out.println(board);
   }
 
   @Override
   @Transactional
-  public void getBoard(BoardRequestDto boardResponseDto ,User user){
-
+  public void getBoard(Long Id){
+    Board board = boardRepository.findById(Id).orElseThrow();
+    System.out.println(board.getTitle());
+    System.out.println(board.getContents());
   }
+  @Override
+  @Transactional
+  public void updateBoard(Long Id, BoardRequestDto boardResponseDto, User user) {
+    Board boardUpdate = boardRepository.findById(Id).orElseThrow();
+    boardUpdate
+        .builder()
+        .contents(boardResponseDto.getContents())
+        .title(boardResponseDto.getTitle())
+        .build();
+    boardRepository.save(boardUpdate);
+  }
+
+  @Override
+  @Transactional
+  public void deleteBoard(Long Id, User user) {
+    boardRepository.deleteById(Id);
+  }
+
 
 
 

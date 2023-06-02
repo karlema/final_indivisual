@@ -40,7 +40,6 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.enableSimpleBroker("/kafkaTopic"); // broker 역할 수행시 사용할 prefix
-    registry.enableSimpleBroker("/subscribe", "/kafkaTopic");
     registry.setApplicationDestinationPrefixes("/app"); // 메세지 수신 용 prefix
 
   }

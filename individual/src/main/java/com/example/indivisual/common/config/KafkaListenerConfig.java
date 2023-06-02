@@ -18,7 +18,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 @Configuration
-
 //receive message by topic
 public class KafkaListenerConfig {
 

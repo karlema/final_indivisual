@@ -1,5 +1,6 @@
-package com.example.indivisual.chat.dto;
+package com.example.indivisual.chat.service;
 
+import com.example.indivisual.chat.dto.KafkaMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -28,7 +29,7 @@ public class ChatConsumer {
     String jsonMessage = mapper.writeValueAsString(kafkaMessage);
 
     System.out.println("message : " +kafkaMessage.getMessage() + "broker : " + kafkaMessage.getBroker());
-    messagingTemplate.convertAndSend("/topic/send", jsonMessage);
+    messagingTemplate.convertAndSend("/kafkaTopic", jsonMessage);
   }
 }
 

@@ -19,7 +19,6 @@ public class KafkaController {
   @Autowired
   private KafkaTemplate<String, KafkaMessage> kafkaTemplate;
 
-  @Transactional
   @MessageMapping("/send")
   public void sendMessage(@RequestBody KafkaMessage message) {
     kafkaTemplate.send("kafkaTopic", message);
