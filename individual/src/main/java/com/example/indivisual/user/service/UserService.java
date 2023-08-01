@@ -12,4 +12,6 @@ public interface UserService {
   UserResponseDto signup(UserRequestDto userRequestDto);
 
   LoginResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response);
+
+  void logout(LoginRequestDto loginRequestDto, HttpServletResponse response);
 }

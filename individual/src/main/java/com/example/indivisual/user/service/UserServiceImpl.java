@@ -52,4 +52,9 @@ public class UserServiceImpl implements UserService{
     return new LoginResponseDto(Token);
   }
 
+  public void logout(LoginRequestDto loginRequestDto, HttpServletResponse response){
+
+
+  }
+
 }

@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class CommentRequestDto {
+public class CommentsRequestDto {
 
   private String name;
   private String contents;
 
-  public CommentRequestDto(String name, String contents) {
+  public CommentsRequestDto(String name, String contents) {
     this.name = name;
     this.contents = contents;
   }
