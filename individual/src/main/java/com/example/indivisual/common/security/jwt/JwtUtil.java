@@ -1,5 +1,7 @@
 package com.example.indivisual.common.security.jwt;
 
+import com.example.indivisual.common.security.user.UserDetailsImpl;
+import com.example.indivisual.common.security.user.UserDetailsServiceImpl;
 import com.example.indivisual.user.entity.UserRoleEnum;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -11,6 +13,9 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import io.jsonwebtoken.Claims;
@@ -34,6 +39,8 @@ public class JwtUtil {
   private Key key;
   private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
+  private final UserDetailsServiceImpl userDetailsService;
+
   @PostConstruct
   public void init() {
     byte[] bytes = Base64.getDecoder().decode(secretKey);
@@ -50,12 +57,12 @@ public class JwtUtil {
   }
 
   // 토큰 생성
-  public String createToken(String username, UserRoleEnum role) {
+  public String createToken(String email, UserRoleEnum role) {
     Date date = new Date();
 
     return BEARER_PREFIX +
         Jwts.builder()
-            .setSubject(username)
+            .setSubject(email)
             .claim(AUTHORIZATION_KEY, role)
             .setExpiration(new Date(date.getTime() + TOKEN_TIME))
             .setIssuedAt(date)
@@ -78,6 +85,17 @@ public class JwtUtil {
       log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
     }
     return false;
+  }
+
+  public Authentication getAuthenticationByAccessToken(String access_token) {
+    String changeToken = access_token.substring(7);
+    String userPrincipal = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(changeToken).getBody().getSubject();
+    UserDetails userDetails = userDetailsService.loadUserByUsername(userPrincipal);
+    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+  }
+
+  public String getSubject(String token) {
+    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
   }
 
   // 토큰에서 사용자 정보 가져오기

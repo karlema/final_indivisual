@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Client</title>
+</head>
+<body>
+<div id="messages"></div>
+<input type="text" id="input-box">
+<button id="send-button">Send</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script>
+  // 채팅 서버에 연결합니다.
+  var socket = new SockJS('http://localhost:8080/chat');
+  var stompClient = Stomp.over(socket);
+
+  // 채팅 메시지를 받는 콜백 함수를 정의합니다.
+  function onMessageReceived(message) {
+    var messageDiv = document.createElement('div');
+    messageDiv.textContent = message.body;
+    document.querySelector('#messages').appendChild(messageDiv);
+  }
+
+  // 채팅 서버에 연결합니다.
+  stompClient.connect({}, function(frame) {
+    console.log('Connected: ' + frame);
+
+    // 채팅 메시지를 구독합니다.
+    stompClient.subscribe('/topic/messages', function(message) {
+      onMessageReceived(message);
+    });
+  });
+
+  // 메시지를 전송하는 함수를 정의합니다.
+  function sendMessage() {
+    var messageInput = document.querySelector('#input-box');
+    var message = messageInput.value.trim();
+    if (message) {
+      stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({content: message}));
+      messageInput.value = '';
+    }
+  }
+
+  // 전송 버튼을 누르면 메시지를 전송합니다.
+  var sendButton = document.querySelector('#send-button');
+  sendButton.addEventListener('click', function() {
+    sendMessage();
+  });
+
+  // Enter 키를 누르면 메시지를 전송합니다.
+  var inputBox = document.querySelector('#input-box');
+  inputBox.addEventListener('keydown', function(event) {
+    if (event.keyCode === 13) {
+      sendMessage();
+    }
+  });
+</script>
+</body>
+</html>

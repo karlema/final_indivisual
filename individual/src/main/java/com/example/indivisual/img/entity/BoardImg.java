@@ -7,17 +7,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
-@Entity
+@Entity(name = "BOARD_IMG")
 @Getter
 @NoArgsConstructor
 public class BoardImg {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "boardImg_id")
+  @Column(name = "BOARD_IMG_ID")
   private Long id;
 
   @ManyToOne

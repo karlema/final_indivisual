@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Room</title>
+</head>
+<body>
+<h1>Chat Room</h1>
+<div id="name-form">
+  <form>
+    <input type="text" id="name" placeholder="Enter your name" required>
+    <button type="submit">Join Chat Room</button>
+  </form>
+</div>
+<div id="chat-form" style="display:none;">
+  <form>
+    <input type="text" id="message" placeholder="Enter your message" required>
+    <button type="submit">Send</button>
+  </form>
+  <button id="disconnect">Leave Chat Room</button>
+</div>
+<div class="chat-area"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+  $(function () {
+    var username = null;
+    var socket = null;
+    var stompClient = null;
+    function connect() {
+      var socketUrl = 'http://localhost:8080/chat';
+      socket = new SockJS(socketUrl);
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/localhost:8080/chat', function (kafkaMessage) {
+          showMessage(JSON.parse(kafkaMessage.body));
+        });
+        stompClient.send('/app/localhost:8080/chat', {}, JSON.stringify({'sender': username, 'type': 'JOIN'}));
+      });
+    }
+
+    function disconnect() {
+      if (socket != null) {
+        socket.close();
+      }
+      console.log("Disconnected");
+    }
+
+    function sendMessage() {
+      var message = $('#message').val().trim();
+      if (message && stompClient) {
+        var kafkaMessage = {
+          sender: username,
+          content: message,
+          type: 'CHAT'
+        };
+        stompClient.send('/app/localhost:8080/chat', {}, JSON.stringify(kafkaMessage));
+        $('#message').val('');
+      }
+    }
+
+    function showMessage(kafkaMessage) {
+      var content = kafkaMessage.content;
+      var sender = kafkaMessage.sender;
+      var messageType = kafkaMessage.type;
+      if (messageType === 'JOIN') {
+        content = sender + ' joined the chat';
+      } else if (messageType === 'LEAVE') {
+        content = sender + ' left the chat';
+      } else {
+        content = sender + ': ' + content;
+      }
+      var html = '<div>' + content + '</div>';
+      $('.chat-area').append(html);
+      $('.chat-area').scrollTop($('.chat-area')[0].scrollHeight);
+    }
+
+    function setUsername() {
+      var name = $('#name').val().trim();
+      if (name) {
+        username = name;
+        connect();
+        $('#name-form').hide();
+        $('#chat-form').show();
+      }
+    }
+
+    $('#name-form form').submit(function (event) {
+      event.preventDefault();
+      setUsername();
+    });
+
+    <!-- 생략된 부분 -->
+    $('#chat-form form').submit(function (event) {
+      event.preventDefault();
+      sendMessage();
+    });
+
+    $('#disconnect').click(function () {
+      stompClient.send('/app/localhost:8080/chat', {}, JSON.stringify({'sender': username, 'type': 'LEAVE'}));
+      disconnect();
+      $('#name-form').show();
+      $('#chat-form').hide();
+      username = null;
+    });
+  });
+</script>
+</body>
+</html>
